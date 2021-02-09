@@ -96,7 +96,7 @@ public class Menu {
 
 
             System.out.println("*               Moja flota $" + MyOwnCompany.cash);
-
+            System.out.println("*               Technologie znane w firmie: " + MyOwnCompany.myCompanyTechnologies);
             if (MyOwnCompany.currentProjects.size() == 0)
                 System.out.println("*               Nie ma żadnych projektów");
             else {
@@ -273,13 +273,15 @@ public class Menu {
         }
         if (!MyOwnCompany.myCompanyTechnologies.containsAll(AvailableOnMarket.availableProjects.get(chosen - 1).setOfTechnologies))
         {
-            System.out.println("*               Nie znasz odpowiednich technologi - musisz zastrudnić programistę");
+            System.out.println("*               "+Projects.RED+"Nie znasz odpowiednich technologii - musisz zastrudnić programistę"+Projects.RESET);
+            System.out.println("*               ");
         }
         else {
             MyOwnCompany.addToCurrentProjects(AvailableOnMarket.availableProjects.get(chosen - 1));
 
             AvailableOnMarket.removeAvailableProject(chosen);
             System.out.println("*               Wybrany projekt nr: " + chosen);
+            NewTime.nextDay();
         }
 
     }
@@ -289,6 +291,7 @@ public class Menu {
         NewTime.printDay();
         System.out.println("*               ****************************************************************");
         System.out.println("*               Mój budżet: " + MyOwnCompany.cash);
+        System.out.println("*               Technologie znane w firmie: " + MyOwnCompany.myCompanyTechnologies);
         System.out.println("*               Moi programiści: ");
         MyOwnCompany.myProgramers();
         System.out.println("*               Moi Sprzedawcy: ");
@@ -438,10 +441,17 @@ public class Menu {
 
     private void giveTheProject() {
         System.out.println("*               ****************************************************************");
+        Scanner input = new Scanner(System.in);
+        if (MyOwnCompany.currentProjects.size()==0) {
+            System.out.println("\n*               Nie masz żadnego projektu!\n");
+            System.out.println("\n*               Wpisz coś, aby iść dalej!");
+            System.out.print("*               ");
+            input.next();
+            return;
+        }
         System.out.println("*               Który projekt chcesz oddać");
         System.out.println("*               0. Cofnij");
         MyOwnCompany.showMyProjects();
-        Scanner input = new Scanner(System.in);
         int select = input.nextInt();
         if(select==0){
             return;
