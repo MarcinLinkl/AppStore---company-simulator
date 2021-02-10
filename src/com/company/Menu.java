@@ -7,11 +7,12 @@ public class Menu {
     MyCompany MyOwnCompany = new MyCompany(20000.0);
     Market AvailableOnMarket = new Market(3, 2, 1);
     Time NewTime = new Time();
-
+    Scanner input = new Scanner(System.in);
+    int selection;
 
     public void Intro() throws ParseException {
-        int selection;
-        Scanner input = new Scanner(System.in);
+
+
         System.out.println("*              ****************************************************************");
         System.out.println("*              *           Witaj wędrowcze w                                  *");
         System.out.println("*              *                  symulatorze firmy programistycznej!         *");
@@ -111,7 +112,7 @@ public class Menu {
             System.out.println("*               4. Przeznaczyć dzień na testowanie");
             System.out.println("*               5. Oddaj gotowy projekt klientowi");
             System.out.println("*               6. Zwolnij pracowników");
-            System.out.println("*               7. Przeznacz dzień na rozliczenia z urzędami (Wymagane 2 dni w miesiącu, w przeciwnym wypadku zamykasz firmę z długami)");
+            System.out.println("*               7. Przeznacz dwa dni na rozliczenia z urzędami (Wymagane 1raz miesiącu, w przeciwnym wypadku zamykasz firmę z długami)");
             System.out.println("*               8. Szukaj pracowników");
             System.out.println("*               9. Wystaw ogłoszenie o pracę");
             System.out.println("*               10. Sprawdź co w firmie");
@@ -180,7 +181,7 @@ public class Menu {
     }
 
     private void findSeller() {
-        System.out.println("\n\n*               ****************************************************************");
+        System.out.println("\n*               ****************************************************************");
         if (AvailableOnMarket.availableSellers.size() == 0) {
             System.out.println("*              Brak sprzedawców - musisz wystawić ogłoszenie!");
             return;
@@ -213,7 +214,7 @@ public class Menu {
     private void findTester() {
         System.out.println("*              ****************************************************************");
         if (AvailableOnMarket.availableTesters.size() == 0) {
-            System.out.println("*              Brak testerów - musisz wystawić ogłoszenie!");
+            System.out.println("\n*              Brak testerów - musisz wystawić ogłoszenie!");
             return;
         }
         for (int i = 0; i < AvailableOnMarket.availableTesters.size(); i++) {
@@ -270,13 +271,12 @@ public class Menu {
         AvailableOnMarket.showProjects();
         int chosen = AvailableOnMarket.projectYouChoose();
         if (chosen == 0) {
+            return;
         }
-        if (!MyOwnCompany.myCompanyTechnologies.containsAll(AvailableOnMarket.availableProjects.get(chosen - 1).setOfTechnologies))
-        {
-            System.out.println("*               "+Projects.RED+"Nie znasz odpowiednich technologii - musisz zastrudnić programistę"+Projects.RESET);
+        if (!MyOwnCompany.myCompanyTechnologies.containsAll(AvailableOnMarket.availableProjects.get(chosen - 1).setOfTechnologies)) {
+            System.out.println("*               " + Projects.RED + "Nie znasz odpowiednich technologii - musisz zastrudnić programistę" + Projects.RESET);
             System.out.println("*               ");
-        }
-        else {
+        } else {
             MyOwnCompany.addToCurrentProjects(AvailableOnMarket.availableProjects.get(chosen - 1));
 
             AvailableOnMarket.removeAvailableProject(chosen);
@@ -287,8 +287,6 @@ public class Menu {
     }
 
     private void checkOut() {
-        System.out.println("*               ****************************************************************");
-        NewTime.printDay();
         System.out.println("*               ****************************************************************");
         System.out.println("*               Mój budżet: " + MyOwnCompany.cash);
         System.out.println("*               Technologie znane w firmie: " + MyOwnCompany.myCompanyTechnologies);
@@ -305,9 +303,13 @@ public class Menu {
 
 
     private void goToTaxman() {
-        NextDay();
-        NextDay();
-        MyOwnCompany.taxman = true;
+        if (MyOwnCompany.taxman) {
+            System.out.println("*               Byłeś już w tym miesiącu w urzędzie skarbowym. ");
+        } else {
+            NextDay();
+            NextDay();
+            MyOwnCompany.taxman = true;
+        }
     }
 
     private void firePeople() {
@@ -328,7 +330,6 @@ public class Menu {
         System.out.println("*               2.Zwolnij programiste ");
         System.out.println("*               3.Zwolnij testera ");
         System.out.print("*               ");
-        Scanner input = new Scanner(System.in);
         int select = input.nextInt();
         while (true) {
             switch (select) {
@@ -337,7 +338,7 @@ public class Menu {
                 }
                 case 1 -> {
                     if (MyOwnCompany.currentSellers.size() == 0) {
-                        System.out.println("*               Nie masz sprzedawcy do wykopania ;(");
+                        System.out.println("*               Nie masz sprzedawcy do wykopania ;(\n");
                         return;
                     } else
                         System.out.println("*               Wybierz sprzedawce: ");
@@ -346,28 +347,30 @@ public class Menu {
                 }
                 case 2 -> {
                     if (MyOwnCompany.currentProgrammers.size() == 0) {
-                        System.out.println("*               Nie masz programisty do wykopania ;(");
+                        System.out.println("*               Nie masz programisty do wykopania ;(\n");
                         return;
-                    }
-                    System.out.println("*               Wybierz programiste: ");
+                    } else
+                        System.out.println("*               Wybierz programiste: ");
                     MyOwnCompany.cash = MyOwnCompany.cash - MyOwnCompany.currentProgrammers.get(input.nextInt() - 1).payment;
                     MyOwnCompany.myCompanyTechnologies.clear();
                     MyOwnCompany.myCompanyTechnologies.addAll(MyOwnCompany.myKnownTechnologies);
-                    for (int i=0;i<MyOwnCompany.currentProgrammers.size();i++) {
+                    for (int i = 0; i < MyOwnCompany.currentProgrammers.size(); i++) {
                         MyOwnCompany.myCompanyTechnologies.addAll(MyOwnCompany.currentProgrammers.get(i).workerTechnologies);
                     }
                     MyOwnCompany.removeProgrammer(input.nextInt() - 1);
                 }
                 case 3 -> {
                     if (MyOwnCompany.currentTesters.size() == 0) {
-                        System.out.println("*               Nie masz testera do wykopania ;(");
+                        System.out.println("*               Nie masz testera do wykopania ;(\n");
                         return;
-                    }
-                    {
+                    } else {
                         System.out.println("*               Wybierz testera: ");
                         MyOwnCompany.cash = MyOwnCompany.cash - MyOwnCompany.currentTesters.get(input.nextInt() - 1).payment;
                         MyOwnCompany.removeTester(input.nextInt() - 1);
                     }
+                }
+                default -> {
+                    return;
                 }
 
             }
@@ -376,19 +379,41 @@ public class Menu {
         }
     }
 
+    public void checkDayLeftInProjects() {
+        for (int i = 0; i < MyOwnCompany.currentProjects.size(); i++) {
+            MyOwnCompany.currentProjects.get(i).days--;
+            if (MyOwnCompany.currentProjects.get(i).days <= 0 && !MyOwnCompany.currentProjects.get(i).extendedReturn) {
+                if (MyOwnCompany.currentProjects.get(i).client.clientType.equals("wyluzowany")) {
+                    System.out.println("\n*               Czas na oddanie projektu " + MyOwnCompany.currentProjects.get(i).name + " się skończył, ale klient jest wyluzowany i da ci jeszcze 7 dni.\n");
+                    MyOwnCompany.currentProjects.get(i).extendedReturn = true;
+                    MyOwnCompany.currentProjects.get(i).days = 7;
+                    return;
+                }
+                if (MyOwnCompany.currentProjects.get(i).client.clientType.equals("wymagający")) {
+                    System.out.println("\n*               Czas na oddanie projektu " + MyOwnCompany.currentProjects.get(i).name + " się skończył, klient jest wymagający, ale i da ci jeszcze 2 dni.\n");
+                    MyOwnCompany.currentProjects.get(i).extendedReturn = true;
+                    MyOwnCompany.currentProjects.get(i).days = 2;
+                    return;
+                } }
+            if (MyOwnCompany.currentProjects.get(i).days <= 0) {
+                System.out.println("Chyba zapomniałeś oddać projekt to klienta...");
+                if (MyOwnCompany.currentProjects.get(i).client.clientType.equals("skrwl"))
+                    System.out.println("Klient to skurwiel i niedał więcej czasu");
+                looser();
+            }
+            }
+
+        }
+
+
+
     public void NextDay() {
         makeProgress();
         NewTime.nextDay();
-        for (int i = 0; i < MyOwnCompany.currentProjects.size(); i++) {
-            MyOwnCompany.currentProjects.get(i).days--;
-            if (MyOwnCompany.currentProjects.get(i).days < 0) {
-                System.out.println("Chyba zapomniałeś oddać projekt to klienta...");
-                looser();
-            }
-        }
+        checkDayLeftInProjects();
     }
 
-    public void makeProgress(int b) {
+    public void makeProgress() {
         int x = MyOwnCompany.currentProgrammers.size();
         if (x > 0 && NewTime.dayOfWeek != 7 && NewTime.dayOfWeek != 1) {
             int y = MyOwnCompany.currentTesters.size();
@@ -411,15 +436,8 @@ public class Menu {
         }
     }
 
-    public void makeProgress() {
-        this.makeProgress(0);
-    }
 
-    public void imakeProgress() {
-        this.makeProgress(1);
-    }
-
-    public void makeByMyProgressTesting() {
+    public void makeByMeProgressTesting() {
         for (int i = 0; i < MyOwnCompany.currentProjects.size(); i++) {
             switch (MyOwnCompany.currentProjects.get(i).levelOfDif) {
                 case 0 -> MyOwnCompany.currentProjects.get(i).progressTesting = MyOwnCompany.currentProjects.get(i).progressTesting + 20;
@@ -429,7 +447,7 @@ public class Menu {
         }
     }
 
-    public void makeByMyProgress() {
+    public void makeByMeProgress() {
         for (int i = 0; i < MyOwnCompany.currentProjects.size(); i++) {
             switch (MyOwnCompany.currentProjects.get(i).levelOfDif) {
                 case 0 -> MyOwnCompany.currentProjects.get(i).progress = MyOwnCompany.currentProjects.get(i).progress + 10;
@@ -442,7 +460,7 @@ public class Menu {
     private void giveTheProject() {
         System.out.println("*               ****************************************************************");
         Scanner input = new Scanner(System.in);
-        if (MyOwnCompany.currentProjects.size()==0) {
+        if (MyOwnCompany.currentProjects.size() == 0) {
             System.out.println("\n*               Nie masz żadnego projektu!\n");
             System.out.println("\n*               Wpisz coś, aby iść dalej!");
             System.out.print("*               ");
@@ -451,35 +469,54 @@ public class Menu {
         }
         System.out.println("*               Który projekt chcesz oddać");
         System.out.println("*               0. Cofnij");
+        System.out.println("*               Lub podaj numer projektu");
+        System.out.println("*               ");
         MyOwnCompany.showMyProjects();
         int select = input.nextInt();
-        if(select==0){
+        if (select == 0) {
             return;
         }
+        if (select>MyOwnCompany.currentProjects.size())
+        {
+            return;
+        }
+        select--;
         if (MyOwnCompany.currentProjects.get(select).progress < 100) {
             System.out.println("*               Nie możesze oddać nieskończonego projektu!");
+            System.out.println("*               ");
+            input.next();
+            return;
         }
         if (MyOwnCompany.currentProjects.get(select).progressTesting < 100) {
             System.out.println("*               Czy chcesz oddać nieprzetestowany kod?!");
-            int insert = input.nextInt();
             System.out.println("*               1. Tak");
             System.out.println("*               2. Nie!");
-            switch (insert) {
-                case 1 -> sellTheProject(select);
-                case 2 -> {
-                    return;
-                }
-
+            int insert = input.nextInt();
+            if (insert == 1) {
+                sellTheProject(select);
+            } else {
+                return;
             }
         }
     }
 
     public void sellTheProject(int jaki) {
         if (MyOwnCompany.currentProjects.get(jaki).progressTesting < 50) {
+            if (MyOwnCompany.currentProjects.get(jaki).client.clientType.equals("wyluzowany") && !MyOwnCompany.currentProjects.get(jaki).extendedReturn) {
+                System.out.println("*               Masz szczęście - klient jest wyluzowany, da ci jeszcze 7 dni na testowanie ");
+                MyOwnCompany.currentProjects.get(jaki).days = MyOwnCompany.currentProjects.get(jaki).days + 7;
+                MyOwnCompany.currentProjects.get(jaki).extendedReturn = true;
+                return;
+            }
+            if (MyOwnCompany.currentProjects.get(jaki).client.clientType.equals("wymagający") && !MyOwnCompany.currentProjects.get(jaki).extendedReturn) {
+                System.out.println("*               Klient jest wymagający, ale da ci jeszcze 3 dni na testowanie ");
+                MyOwnCompany.currentProjects.get(jaki).days = MyOwnCompany.currentProjects.get(jaki).days + 3;
+                MyOwnCompany.currentProjects.get(jaki).extendedReturn = true;
+                return;
+            }
             switch (Projects.getRandom(0, 2)) {
                 case 0 -> {
-                    System.out.println("*               Projekt był skopany! Klient chce zniżkę o 50%");
-                    MyOwnCompany.cash = MyOwnCompany.cash + (MyOwnCompany.currentProjects.get(jaki).cost / 2);
+                    System.out.println("*               Projekt był skopany!");
                 }
                 case 1 -> {
                     System.out.println("*               Projekt był skopany czesciowo, da się naprawić! Klient chce zniżkę o połowe 20%");
@@ -492,10 +529,23 @@ public class Menu {
             }
         }
 
-        if (MyOwnCompany.currentProjects.get(jaki).progressTesting > 50)
+        if (MyOwnCompany.currentProjects.get(jaki).progressTesting > 50 && MyOwnCompany.currentProjects.get(jaki).progressTesting < 100) {
+            if (MyOwnCompany.currentProjects.get(jaki).client.clientType.equals("wyluzowany") && !MyOwnCompany.currentProjects.get(jaki).extendedReturn) {
+                System.out.println("*               Masz szczęście - klient jest wyluzowany, da ci jeszcze 7 dni na testowanie ");
+                MyOwnCompany.currentProjects.get(jaki).days = MyOwnCompany.currentProjects.get(jaki).days + 7;
+                MyOwnCompany.currentProjects.get(jaki).extendedReturn = true;
+                return;
+            }
+            if (MyOwnCompany.currentProjects.get(jaki).client.clientType.equals("wymagający")) {
+                System.out.println("*               Klient jest wymagający, ale da ci jeszcze 3 dni na testowanie ");
+                MyOwnCompany.currentProjects.get(jaki).days = MyOwnCompany.currentProjects.get(jaki).days + 3;
+                MyOwnCompany.currentProjects.get(jaki).extendedReturn = true;
+                return;
+            }
+
             switch (Projects.getRandom(0, 1)) {
                 case 0 -> {
-                    System.out.println("*               Projekt był skopany! Klient chce zniżkę o 20%");
+                    System.out.println("*               Projekt był częsciowo wadliwy! Klient chce zniżkę o 20%");
                     MyOwnCompany.cash = MyOwnCompany.cash + (MyOwnCompany.currentProjects.get(jaki).cost * 0.8);
                 }
                 case 1 -> {
@@ -504,18 +554,40 @@ public class Menu {
                 }
 
             }
+        }
+        if ((MyOwnCompany.currentProjects.get(jaki).progressTesting >= 100)) {
+            System.out.println("*               Wszystko ok ;) - klient zadowolony");
+            MyOwnCompany.cash = MyOwnCompany.cash + (MyOwnCompany.currentProjects.get(jaki).cost);
+            MyOwnCompany.removeCurrentProjects(jaki);
+            NewTime.nextDay();
+        }
+
         MyOwnCompany.removeCurrentProjects(jaki);
         NewTime.nextDay();
     }
 
     private void spendTimeOnTesting() {
-        makeByMyProgressTesting();
-        NextDay();
+        if (MyOwnCompany.currentProjects.size() == 0) {
+            System.out.println("*               Nie masz żadnych projektów nad którymi mógłbyś pracować\n");
+            System.out.println("*               Idź dalej.");
+            System.out.print("*               ");
+            input.next();
+        } else {
+            makeByMeProgressTesting();
+            NextDay();
+        }
     }
 
     private void spendTimeOnPrograming() {
-        makeByMyProgress();
-        NextDay();
+        if (MyOwnCompany.currentProjects.size() == 0) {
+            System.out.println("*               Nie masz żadnych projektów nad którymi mógłbyś pracować\n");
+            System.out.println("*               Idź dalej.");
+            System.out.print("*               ");
+            input.next();
+        } else {
+            makeByMeProgress();
+            NextDay();
+        }
     }
 
 

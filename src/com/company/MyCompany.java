@@ -27,8 +27,9 @@ public class MyCompany {
         this.myKnownTechnologies.add(Projects.BAZA_DANYCH);
         this.myKnownTechnologies.add(Projects.FRONTEND);
         this.myCompanyTechnologies=this.myKnownTechnologies;
-        clients=0;
-        pay=false;
+        this.clients=0;
+        this.pay=false;
+
     }
 
 

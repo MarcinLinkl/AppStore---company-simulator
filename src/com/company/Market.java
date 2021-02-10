@@ -27,7 +27,7 @@ public class Market {
     public void makeWorkers(int numberOfTesters,int numberOfProgrammers,int numberOfSeller)
     {
         for (int x = 0; x < numberOfTesters; x++) {
-            this.availableProjects.add(new Projects());
+            this.availableTesters.add(new Testers());
         }
         for (int x = 0; x < numberOfProgrammers; x++) {
             this.availableProgrammers.add(new Programmers(Projects.getRandom(1, 6)));
@@ -61,6 +61,7 @@ public class Market {
 
     public int projectYouChoose() {
         System.out.println("*              Wybierz projekt lub 0 cofnij");
+        System.out.print("*              ");
         Scanner input = new Scanner(System.in);
         int which = input.nextInt();
         if (which > availableProjects.size()) {

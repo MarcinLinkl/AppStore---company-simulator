@@ -33,7 +33,7 @@ public class Projects {
     public int levelOfDif;
     public int progress=0;
     public int progressTesting=0;
-
+    public boolean extendedReturn=false;
     Set<String> setOfTechnologies = new HashSet<String>();
 
     public Projects() {
@@ -42,7 +42,7 @@ public class Projects {
         switch (levelOfDiff) {
             case 0 -> {
                 this.name = getLowProject();
-                this.days = (getRandom(5, 10));
+                this.days = (getRandom(7, 10));
                 this.levelOfDif=0;
                 this.levelOfDifficulty = getLevelOfDifficulty(0);
                 this.cost = getPriceLow();
@@ -51,7 +51,7 @@ public class Projects {
             }
             case 1 -> {
                 this.name = getMedProject();
-                this.days = (getRandom(7, 20));
+                this.days = (getRandom(10, 20));
                 this.levelOfDif=1;
                 this.levelOfDifficulty = getLevelOfDifficulty(1);
                 this.cost = getPriceMed();
@@ -59,7 +59,7 @@ public class Projects {
             }
             case 2 -> {
                 this.name = getHardProject();
-                this.days = (getRandom(14, 30));
+                this.days = (getRandom(17, 30));
                 this.levelOfDif=2;
                 this.levelOfDifficulty = getLevelOfDifficulty(2);
                 this.cost = getPriceHard();
